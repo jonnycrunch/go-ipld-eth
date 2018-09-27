@@ -30,7 +30,7 @@ const (
 
 // rawdataToCid takes the desired codec and a slice of bytes
 // and returns the proper cid of the object.
-func rawdataToCid(codec uint64, rawdata []byte) *cid.Cid {
+func rawdataToCid(codec uint64, rawdata []byte) cid.Cid {
 	c, err := cid.Prefix{
 		Codec:    codec,
 		Version:  1,
@@ -45,7 +45,7 @@ func rawdataToCid(codec uint64, rawdata []byte) *cid.Cid {
 
 // keccak256ToCid takes a keccak256 hash and returns its cid based on
 // the codec given.
-func keccak256ToCid(codec uint64, h []byte) *cid.Cid {
+func keccak256ToCid(codec uint64, h []byte) cid.Cid {
 	buf, err := mh.Encode(h, mh.KECCAK_256)
 	if err != nil {
 		panic(err)
@@ -56,7 +56,7 @@ func keccak256ToCid(codec uint64, h []byte) *cid.Cid {
 
 // commonHashToCid takes a go-ethereum common.Hash and returns its
 // cid based on the codec given,
-func commonHashToCid(codec uint64, h common.Hash) *cid.Cid {
+func commonHashToCid(codec uint64, h common.Hash) cid.Cid {
 	mhash, err := mh.Encode(h[:], mh.KECCAK_256)
 	if err != nil {
 		panic(err)
@@ -91,10 +91,7 @@ func newLocalTrie() *localTrie {
 	var err error
 	lt := &localTrie{}
 
-	lt.db, err = ethdb.NewMemDatabase()
-	if err != nil {
-		panic(err)
-	}
+	lt.db = ethdb.NewMemDatabase()
 
 	lt.trie, err = trie.New(common.Hash{}, lt.db)
 	if err != nil {
